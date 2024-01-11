@@ -3,6 +3,7 @@ package harmony
 import "net/http"
 
 type (
+	// Group is the interface for Harmony's Group.
 	Group struct {
 		harmony     *Harmony
 		prefix      string
