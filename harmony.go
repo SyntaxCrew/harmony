@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"strconv"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -165,7 +166,7 @@ func (h *Harmony) GracefulShutdown() error {
 	}
 
 	log.Println("harmony: gracefully shutdown")
-	os.Exit(0)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	return nil
 }
 
