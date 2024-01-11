@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: '/docs',
   title: "Harmony",
   description: "High-performance Golang web framework. Get started with guides, API references, and examples for efficient and scalable web development.",
   themeConfig: {
@@ -30,7 +31,7 @@ export default defineConfig({
             collapsed: true,
             base: '/guide/middlewares',
             items: [
-              { text: 'Gzip', link: '/gzip',  },
+              { text: 'Gzip', link: '/gzip', },
               { text: 'Logger', link: '/logger' },
             ]
           },
