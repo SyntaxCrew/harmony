@@ -9,6 +9,7 @@ import (
 )
 
 type (
+	// Binder is the interface that wraps the Bind and BindJSON method.
 	Binder interface {
 		// Bind binds the request body, path params and query params to the dest.
 		Bind(ctx Context, dest any) error

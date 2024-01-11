@@ -9,6 +9,7 @@ import (
 )
 
 type (
+	// Context is the interface for the Harmony context.
 	Context interface {
 		// Request returns the *http.Request object.
 		Request() *http.Request
@@ -79,6 +80,7 @@ type (
 	}
 )
 
+// NewContext returns a new Harmony Context.
 func NewContext(w http.ResponseWriter, r *http.Request, binder Binder) Context {
 	return &context{
 		w:     w,
@@ -88,36 +90,44 @@ func NewContext(w http.ResponseWriter, r *http.Request, binder Binder) Context {
 	}
 }
 
+// Request returns the *http.Request object.
 func (c *context) Request() *http.Request {
 	return c.r
 }
 
+// ResponseWriter returns the http.ResponseWriter object.
 func (c *context) ResponseWriter() http.ResponseWriter {
 	return c.w
 }
 
+// Bind binds the request body into dest.
 func (c *context) Bind(dest any) error {
 	return c.bdr.Bind(c, dest)
 }
 
+// JSON writes the response in JSON format.
 func (c *context) JSON(code int, body any) error {
 	c.w.Header().Set(HeaderContentType, MIMEApplicationJSONCharsetUTF8)
 	c.w.WriteHeader(code)
 	return json.NewEncoder(c.w).Encode(body)
 }
 
+// PathParams returns the path parameters of the request in map[string]string.
 func (c *context) PathParams() map[string]string {
 	return mux.Vars(c.r)
 }
 
+// PathParam returns the path parameter of the request by key in string.
 func (c *context) PathParam(key string) string {
 	return mux.Vars(c.r)[key]
 }
 
+// PathParamInt returns the path parameter of the request by key in int.
 func (c *context) PathParamInt(key string) (int, error) {
 	return strconv.Atoi(mux.Vars(c.r)[key])
 }
 
+// SetPathParam sets the path parameter of the request by key and value.
 func (c *context) SetPathParam(key, value string) {
 	vars := make(map[string]string)
 	if len(mux.Vars(c.r)) > 0 {
@@ -129,6 +139,7 @@ func (c *context) SetPathParam(key, value string) {
 	c.r = mux.SetURLVars(c.r, vars)
 }
 
+// QueryString returns the query string of the request in string.
 func (c *context) QueryString(key string, defaultValue ...string) string {
 	qs := c.r.URL.Query().Get(key)
 	if qs == "" && len(defaultValue) > 0 {
@@ -137,6 +148,7 @@ func (c *context) QueryString(key string, defaultValue ...string) string {
 	return qs
 }
 
+// QueryInt returns the query parameter of the request by key in int.
 func (c *context) QueryInt(key string, defaultValue ...int) int {
 	i, err := strconv.Atoi(c.r.URL.Query().Get(key))
 	if err != nil && len(defaultValue) > 0 {
@@ -145,6 +157,7 @@ func (c *context) QueryInt(key string, defaultValue ...int) int {
 	return i
 }
 
+// QueryFloat64 returns the query parameter of the request by key in float64.
 func (c *context) QueryFloat64(key string, defaultValue ...float64) float64 {
 	f64, err := strconv.ParseFloat(c.r.URL.Query().Get(key), 64)
 	if err != nil && len(defaultValue) > 0 {
@@ -153,6 +166,7 @@ func (c *context) QueryFloat64(key string, defaultValue ...float64) float64 {
 	return f64
 }
 
+// QueryBool returns the query parameter of the request by key in bool.
 func (c *context) QueryBool(key string, defaultValue ...bool) bool {
 	b, err := strconv.ParseBool(c.r.URL.Query().Get(key))
 	if err != nil && len(defaultValue) > 0 {
@@ -161,11 +175,13 @@ func (c *context) QueryBool(key string, defaultValue ...bool) bool {
 	return b
 }
 
+// SendStatus writes the response status code.
 func (c *context) SendStatus(code int) error {
 	c.w.WriteHeader(code)
 	return nil
 }
 
+// String writes the response in string format.
 func (c *context) String(code int, s string) error {
 	c.w.Header().Set(HeaderContentType, MIMETextPlainCharsetUTF8)
 	c.w.WriteHeader(code)
@@ -173,12 +189,14 @@ func (c *context) String(code int, s string) error {
 	return err
 }
 
+// Get returns the value in the context by key.
 func (c *context) Get(key string) any {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 	return c.store[key]
 }
 
+// Set sets the value in the context by key and value.
 func (c *context) Set(key string, value any) {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
@@ -194,6 +212,7 @@ func (c *context) reset() {
 	c.store = make(Map)
 }
 
+// SetResponseWriter sets the http.ResponseWriter.
 func (c *context) SetResponseWriter(w http.ResponseWriter) {
 	c.w = w
 }

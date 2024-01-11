@@ -54,6 +54,7 @@ const (
 )
 
 type (
+	// Harmony is the interface for Harmony.
 	Harmony struct {
 		// gmux is the underlying router used by Harmony.
 		gmux *mux.Router
@@ -83,6 +84,7 @@ type (
 	// Map is a shortcut for map[string]any.
 	Map map[string]any
 
+	// HTTPError is the error returned by Harmony.
 	HTTPError struct {
 		Code    int
 		Message string
