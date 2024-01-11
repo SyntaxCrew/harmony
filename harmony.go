@@ -154,8 +154,7 @@ func (h *Harmony) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // GracefulShutdown waits for SIGINT and gracefully shutdown the server.
 func (h *Harmony) GracefulShutdown() error {
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	signal.Notify(c, os.Kill)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
 	<-c
 	ctx, cancel := gocontext.WithTimeout(gocontext.Background(), 10*time.Second)
@@ -166,7 +165,7 @@ func (h *Harmony) GracefulShutdown() error {
 	}
 
 	log.Println("harmony: gracefully shutdown")
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	os.Exit(1)
 	return nil
 }
 
