@@ -14,6 +14,7 @@ const (
 )
 
 type (
+	// LoggerConfig defines the config for Logger middleware.
 	LoggerConfig struct {
 		// Skipper defines a function to skip middleware.
 		Skipper Skipper
@@ -38,6 +39,7 @@ type (
 	}
 )
 
+// Logger returns a middleware which logs HTTP requests.
 func Logger(loggerCfg ...*LoggerConfig) harmony.MiddlewareFunc {
 	cfg := &LoggerConfig{
 		Skipper: defaultSkipper,
@@ -72,6 +74,7 @@ func Logger(loggerCfg ...*LoggerConfig) harmony.MiddlewareFunc {
 	}
 }
 
+// WriteHeader implements http.ResponseWriter.
 func (w *loggerResponseWriter) WriteHeader(code int) {
 	now := time.Now()
 	w.code = code

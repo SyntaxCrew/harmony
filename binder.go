@@ -10,7 +10,9 @@ import (
 
 type (
 	Binder interface {
+		// Bind binds the request body, path params and query params to the dest.
 		Bind(ctx Context, dest any) error
+		// BindJSON binds the request body to the dest.
 		BindJSON(ctx Context, dest any) error
 	}
 
@@ -21,10 +23,12 @@ func newBinder() Binder {
 	return &binder{}
 }
 
+// BindJSON binds the request body to the dest.
 func (b *binder) BindJSON(ctx Context, dest any) error {
 	return json.NewDecoder(ctx.Request().Body).Decode(dest)
 }
 
+// Bind binds the request body, path params and query params to the dest.
 func (b *binder) Bind(ctx Context, dest any) (err error) {
 	defer func() {
 		if r := recover(); r != nil {

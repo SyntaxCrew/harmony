@@ -14,6 +14,7 @@ import (
 const gzipScheme = "gzip"
 
 type (
+	// GzipConfig defines the config for Gzip middleware.
 	GzipConfig struct {
 		// Skipper defines a function to skip middleware.
 		Skipper Skipper
@@ -42,6 +43,7 @@ type (
 	}
 )
 
+// Gzip returns a middleware which compresses HTTP response using gzip compression
 func Gzip(gzipCfg ...*GzipConfig) harmony.MiddlewareFunc {
 	cfg := &GzipConfig{
 		Skipper: defaultSkipper,
@@ -76,7 +78,7 @@ func Gzip(gzipCfg ...*GzipConfig) harmony.MiddlewareFunc {
 			gp := gzipPool.Get()
 			gw, ok := gp.(*gzip.Writer)
 			if !ok {
-				return harmony.NewHTTPResponse(http.StatusInternalServerError, gp.(error).Error())
+				return harmony.NewHTTPError(http.StatusInternalServerError, gp.(error).Error())
 			}
 			defer func() {
 				gw.Reset(rw)
@@ -87,7 +89,7 @@ func Gzip(gzipCfg ...*GzipConfig) harmony.MiddlewareFunc {
 			bp := bufferPool.Get()
 			buf, ok := bp.(*bytes.Buffer)
 			if !ok {
-				return harmony.NewHTTPResponse(http.StatusInternalServerError, bp.(error).Error())
+				return harmony.NewHTTPError(http.StatusInternalServerError, bp.(error).Error())
 			}
 			defer func() {
 				buf.Reset()
@@ -114,6 +116,7 @@ func Gzip(gzipCfg ...*GzipConfig) harmony.MiddlewareFunc {
 	}
 }
 
+// WriteHeader implements http.ResponseWriter.
 func (grw *gzipResponseWriter) WriteHeader(code int) {
 	if grw.isWroteHeader {
 		return
@@ -124,6 +127,7 @@ func (grw *gzipResponseWriter) WriteHeader(code int) {
 	grw.ResponseWriter.WriteHeader(code)
 }
 
+// Write implements io.Writer.
 func (grw *gzipResponseWriter) Write(b []byte) (int, error) {
 	if grw.isWroteBody {
 		return 0, nil
@@ -151,6 +155,7 @@ func (grw *gzipResponseWriter) Write(b []byte) (int, error) {
 	return grw.Writer.Write(b)
 }
 
+// Flush implements http.Flusher.
 func (grw *gzipResponseWriter) Flush() {
 	if !grw.isMinLengthExceeded {
 		// Enforce compression because we will not know how much more data will come
@@ -169,6 +174,7 @@ func (grw *gzipResponseWriter) Flush() {
 	}
 }
 
+// Hijack implements http.Hijacker.
 func (grw *gzipResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	return grw.ResponseWriter.(http.Hijacker).Hijack()
 }

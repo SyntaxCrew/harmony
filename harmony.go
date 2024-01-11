@@ -26,10 +26,15 @@ const (
 )
 
 const (
-	HeaderContentType     = "Content-Type"
-	HeaderVary            = "Vary"
-	HeaderAcceptEncoding  = "Accept-Encoding"
-	HeaderContentLength   = "Content-Length"
+	// HeaderContentType is the header key for Content-Type.
+	HeaderContentType = "Content-Type"
+	// HeaderVary is the header key for Vary.
+	HeaderVary = "Vary"
+	// HeaderAcceptEncoding is the header key for Accept-Encoding.
+	HeaderAcceptEncoding = "Accept-Encoding"
+	// HeaderContentLength is the header key for Content-Length.
+	HeaderContentLength = "Content-Length"
+	// HeaderContentEncoding is the header key for Content-Encoding.
 	HeaderContentEncoding = "Content-Encoding"
 )
 
@@ -38,10 +43,14 @@ const (
 )
 
 const (
-	MIMEApplicationJSON            = "application/json"
+	// MIMEApplicationJSON is the MIME type for JSON.
+	MIMEApplicationJSON = "application/json"
+	// MIMEApplicationJSONCharsetUTF8 is the MIME type for JSON with charset=utf-8.
 	MIMEApplicationJSONCharsetUTF8 = MIMEApplicationJSON + "; " + charsetUTF8
-	MIMETextPlain                  = "text/plain"
-	MIMETextPlainCharsetUTF8       = MIMETextPlain + "; " + charsetUTF8
+	// MIMETextPlain is the MIME type for plain text.
+	MIMETextPlain = "text/plain"
+	// MIMETextPlainCharsetUTF8 is the MIME type for plain text with charset=utf-8.
+	MIMETextPlainCharsetUTF8 = MIMETextPlain + "; " + charsetUTF8
 )
 
 type (
@@ -80,6 +89,7 @@ type (
 	}
 )
 
+// New returns a new instance of Harmony.
 func New() *Harmony {
 	return &Harmony{
 		gmux:  mux.NewRouter(),
@@ -214,8 +224,9 @@ func (h *Harmony) Trace(path string, handlerFunc HandlerFunc, middlewares ...Mid
 	h.add(http.MethodTrace, path, handlerFunc, middlewares...)
 }
 
-func NewHTTPResponse(code int, message string) *HTTPError {
-	return &HTTPError{Message: message}
+// NewHTTPError returns a new HTTP error.
+func NewHTTPError(code int, message string) *HTTPError {
+	return &HTTPError{Code: code, Message: message}
 }
 
 func (h *Harmony) add(method, path string, handlerFunc HandlerFunc, middlewares ...MiddlewareFunc) {
