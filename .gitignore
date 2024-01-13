@@ -25,3 +25,4 @@ go.work
 
 # docs
 docs/node_modules
+docs/.vitepress/dist
