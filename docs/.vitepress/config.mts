@@ -6,7 +6,6 @@ export default defineConfig({
   title: "Harmony",
   description: "High-performance Golang web framework. Get started with guides, API references, and examples for efficient and scalable web development.",
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Docs', link: '/getting-started/quick-start' }
